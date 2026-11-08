@@ -31,6 +31,12 @@
   input[type=range] { width:100%; accent-color:var(--bad); }
   select { width:100%; font:inherit; font-size:14px; padding:8px; border-radius:10px; background:#222; color:var(--fg); border:1px solid #333; }
   #err { color:var(--bad); font-size:14px; text-align:center; margin-top:12px; max-width:340px; }
+  .btns { display:flex; gap:8px; }
+  .small { flex:1; font-size:14px; font-weight:600; padding:10px; border-radius:10px; background:#222; color:var(--fg);
+    border:1px solid #333; text-align:center; width:auto; display:block; margin:0; cursor:pointer; }
+  #clear { flex:0 0 44px; }
+  #rec.on { background:var(--bad); color:#fff; }
+  .chk { display:flex !important; justify-content:flex-start !important; gap:8px; align-items:center; margin-top:10px; }
   #test { background:transparent; color:var(--mut); border:1px solid #333; font-size:14px; padding:10px; margin-top:12px; }
 </style>
 </head>
@@ -67,6 +73,15 @@
 <div class="row">
   <label>Röst</label>
   <select id="voiceSel"></select>
+</div>
+<div class="row">
+  <label>Egen röstfil <b id="clipState">ingen</b></label>
+  <div class="btns">
+    <button id="rec" class="small">⏺ Spela in</button>
+    <label class="small filebtn">📁 Ljudfil<input type="file" accept="audio/*" id="file" hidden></label>
+    <button id="clear" class="small">✕</button>
+  </div>
+  <label class="chk"><input type="checkbox" id="deep" checked> Mörkare röst (sänker tonen på egen fil)</label>
 </div>
 <button id="test">🔊 Testa rösten</button>
 <div id="err"></div>
@@ -121,7 +136,58 @@ function score(v){ return (MALE_HINTS.test(v.name)?10:0) - (FEMALE_HINTS.test(v.
 $("voiceSel").onchange = e => { chosen = voices.find(v => v.name === e.target.value); try{localStorage.setItem("voice", chosen.name);}catch(_){} };
 if ("speechSynthesis" in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
+/* ---------- Egen röstfil (sparas i webbläsaren) ---------- */
+let clipUrl = null, recorder = null;
+const audioEl = new Audio(); audioEl.preload = "auto"; audioEl.playsInline = true;
+function idb(){ return new Promise((res, rej) => { const r = indexedDB.open("dezibel", 1);
+  r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function putClip(b){ try { const db = await idb(); const t = db.transaction("kv","readwrite");
+  b ? t.objectStore("kv").put(b, "clip") : t.objectStore("kv").delete("clip"); } catch(e){} }
+async function getClip(){ try { const db = await idb(); return await new Promise(r => {
+  const q = db.transaction("kv").objectStore("kv").get("clip"); q.onsuccess = () => r(q.result || null); q.onerror = () => r(null); }); } catch(e){ return null; } }
+function setClip(b){
+  if (clipUrl) URL.revokeObjectURL(clipUrl);
+  clipUrl = b ? URL.createObjectURL(b) : null;
+  audioEl.src = clipUrl || "";
+  $("clipState").textContent = b ? "används ✓" : "ingen";
+}
+getClip().then(setClip);
+
+$("file").onchange = e => { const f = e.target.files[0]; if (f) { setClip(f); putClip(f); } };
+$("clear").onclick = () => { setClip(null); putClip(null); };
+$("rec").onclick = async () => {
+  if (recorder) { recorder.stop(); return; }
+  try {
+    const s = stream || await navigator.mediaDevices.getUserMedia({ audio: true });
+    const chunks = [];
+    recorder = new MediaRecorder(s);
+    recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
+    recorder.onstop = () => {
+      const b = new Blob(chunks, { type: recorder.mimeType || "audio/mp4" });
+      if (s !== stream) s.getTracks().forEach(t => t.stop());
+      recorder = null; lastSpoke = performance.now(); $("rec").classList.remove("on"); $("rec").textContent = "⏺ Spela in";
+      setClip(b); putClip(b);
+    };
+    recorder.start(); $("rec").classList.add("on"); $("rec").textContent = "⏹ Stoppa";
+    lastSpoke = performance.now() + 60000; // trigga inte medan du spelar in
+    setTimeout(() => recorder && recorder.stop(), 6000);
+  } catch(e) { $("err").textContent = "Kunde inte spela in – tillåt mikrofonen (kräver https)."; }
+};
+function applyDeep(){
+  const deep = $("deep").checked;
+  audioEl.preservesPitch = audioEl.mozPreservesPitch = audioEl.webkitPreservesPitch = !deep;
+  audioEl.playbackRate = deep ? 0.82 : 1;
+}
+
 function speak(){
+  if (clipUrl) {
+    applyDeep();
+    speaking = true;
+    audioEl.currentTime = 0;
+    audioEl.onended = audioEl.onerror = () => { speaking = false; lastSpoke = performance.now(); };
+    audioEl.play().catch(() => { speaking = false; lastSpoke = performance.now(); });
+    return;
+  }
   if (!("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(LINE);
@@ -143,6 +209,7 @@ async function start(){
   try {
     // "väck" talsyntesen inom användarklicket (krävs i iOS)
     if ("speechSynthesis" in window) { const w = new SpeechSynthesisUtterance(" "); w.volume = 0; speechSynthesis.speak(w); }
+    if (clipUrl) { audioEl.muted = true; audioEl.play().then(() => { audioEl.pause(); audioEl.muted = false; }).catch(() => { audioEl.muted = false; }); }
     stream = await navigator.mediaDevices.getUserMedia({
       audio: { echoCancellation:false, noiseSuppression:false, autoGainControl:false }
     });
