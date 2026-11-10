@@ -24,21 +24,35 @@
   h1{font-family:"Archivo Black",sans-serif;font-size:34px;margin:0;letter-spacing:-.01em;line-height:1}
   .sub{color:var(--mut);font-size:14px;margin:6px 0 0}
 
-  /* Örat */
-  .stage{position:relative;width:min(78vw,320px);aspect-ratio:1;margin:18px 0 6px;display:grid;place-items:center}
-  .rings{position:absolute;inset:0}
+  /* Herr Ohr */
+  .stage{position:relative;width:min(86vw,360px);aspect-ratio:1;margin:14px 0 4px;display:grid;place-items:center;--rage:0}
+  .rings{position:absolute;inset:6% 10% 20%}
   .rings span{position:absolute;inset:0;border-radius:50%;border:2px solid var(--red);opacity:0;transform:scale(.6)}
   .loud .rings span{animation:ring 1s ease-out infinite}
   .loud .rings span:nth-child(2){animation-delay:.33s}.loud .rings span:nth-child(3){animation-delay:.66s}
   @keyframes ring{to{opacity:0;transform:scale(1.15)}from{opacity:.7;transform:scale(.6)}}
-  #ear{width:72%;transition:transform .15s;transform:scale(calc(1 + var(--lvl)*.12))}
-  .loud #ear{animation:shake .12s linear infinite}
-  @keyframes shake{0%{translate:-3px 0;rotate:-2deg}50%{translate:3px 0;rotate:2deg}100%{translate:-3px 0;rotate:-2deg}}
-  #ear .skin{fill:var(--skin);transition:fill .2s}
-  .warm #ear .skin{fill:#f59a7a}
-  .loud #ear .skin{fill:#ff6a52}
-  #ear .inner{fill:var(--skin2)}
-  .bubble{position:absolute;top:2%;right:-4%;background:var(--fg);color:#111;font-weight:600;font-size:15px;
+  #man{position:relative;width:100%;height:100%;overflow:visible}
+  #man *{transform-box:fill-box}
+  #body{transform-origin:50% 100%;animation:breathe 3.6s ease-in-out infinite}
+  @keyframes breathe{50%{transform:scale(1.008,1.014)}}
+  .loud #man{animation:shake .11s linear infinite}
+  @keyframes shake{0%{translate:-4px 0;rotate:-1.5deg}50%{translate:4px 1px;rotate:1.5deg}100%{translate:-4px 0;rotate:-1.5deg}}
+  #flush{opacity:calc(var(--rage)*.85);transition:opacity .15s}
+  .brow{stroke:#2b1d17;stroke-width:9;stroke-linecap:round;fill:none;opacity:0;transition:opacity .15s,transform .15s;transform-origin:center}
+  .warm .brow{opacity:.75;transform:translateY(2px)}
+  .loud .brow{opacity:1;transform:translateY(5px) scale(1.1)}
+  #mouth{opacity:0;transform-origin:center;transform:scale(.4,.2);transition:all .12s cubic-bezier(.2,1.6,.4,1)}
+  .loud #mouth{opacity:1;transform:none;animation:yell .18s ease-in-out infinite alternate}
+  @keyframes yell{to{transform:scale(1.08,1.25)}}
+  #vein{opacity:0;transform-origin:center;transition:opacity .15s}
+  .loud #vein{opacity:1;animation:pulse .35s ease-in-out infinite alternate}
+  @keyframes pulse{from{transform:scale(.85)}to{transform:scale(1.15)}}
+  .steam circle{fill:#fff;opacity:0}
+  .loud .steam circle{animation:puff 1s ease-out infinite}
+  .loud .steam circle:nth-child(2){animation-delay:.33s}.loud .steam circle:nth-child(3){animation-delay:.66s}
+  @keyframes puff{0%{opacity:.85;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--dx),-70px) scale(1.8)}}
+  .steam.l circle{--dx:-34px}.steam.r circle{--dx:34px}
+  .bubble{position:absolute;top:0;right:-2%;background:var(--fg);color:#111;font-weight:600;font-size:15px;
     padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:62%;opacity:0;transform:translateY(8px) scale(.9);
     transition:all .25s cubic-bezier(.2,1.4,.4,1);pointer-events:none}
   .bubble.show{opacity:1;transform:none}
@@ -84,19 +98,30 @@
 <div id="flash"></div>
 <div class="flag"><i></i><i></i><i></i></div>
 <h1>HERR OHR</h1>
-<p class="sub">Ein sehr empfindliches Ohr.</p>
+<p class="sub">Ein sehr empfindlicher Herr.</p>
 
 <div class="stage" id="stage">
   <div class="rings"><span></span><span></span><span></span></div>
-  <svg id="ear" viewBox="0 0 200 240" aria-hidden="true">
-    <path class="skin" d="M100 12c-50 0-82 36-82 84 0 30 12 50 26 66 12 14 14 26 16 40 4 22 20 34 40 34 22 0 36-16 36-34 0-14-8-20-8-34 0-16 30-30 30-72C158 46 140 12 100 12z"/>
-    <path class="inner" d="M100 40c-34 0-56 24-56 56 0 18 8 30 18 40 8 8 6 20 18 22 10 2 14-8 12-18-2-12-14-14-14-30 0-18 12-32 30-32 16 0 26 10 26 24 0 12-8 16-8 26 0 8 10 10 14 2 6-12 14-18 14-34 0-34-24-56-54-56z"/>
-    <ellipse cx="96" cy="108" rx="11" ry="15" fill="#5a2a1a" opacity=".55"/>
-    <!-- ansikte -->
-    <g id="face" fill="#2a1410">
-      <circle id="eyeL" cx="76" cy="190" r="4"/><circle id="eyeR" cx="112" cy="190" r="4"/>
-      <path id="mouth" d="M84 210q10 6 20 0" stroke="#2a1410" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <svg id="man" viewBox="0 0 622 626" aria-hidden="true">
+    <defs>
+      <filter id="hot" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1.15 .1 0 0 .04  0 .62 0 0 0  0 0 .55 0 0  0 0 0 1 0"/></filter>
+      <radialGradient id="faceG"><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
+      <mask id="faceM"><ellipse cx="312" cy="218" rx="92" ry="92" fill="url(#faceG)"/></mask>
+    </defs>
+    <g id="body">
+      <image href="gubbe.webp" width="622" height="626"/>
+      <g id="flush" mask="url(#faceM)"><image href="gubbe.webp" width="622" height="626" filter="url(#hot)"/></g>
+      <path class="brow" d="M264 152 L306 167"/>
+      <path class="brow" d="M362 150 L322 165"/>
+      <g id="mouth">
+        <ellipse cx="312" cy="242" rx="20" ry="14" fill="#3a0d0a" stroke="#7a3328" stroke-width="2"/>
+        <rect x="299" y="230" width="26" height="5" rx="2" fill="#efe9dc"/>
+        <ellipse cx="312" cy="250" rx="10" ry="4" fill="#b8473c"/>
+      </g>
+      <text id="vein" x="372" y="150" font-size="38">💢</text>
     </g>
+    <g class="steam l"><circle cx="244" cy="196" r="12"/><circle cx="244" cy="196" r="12"/><circle cx="244" cy="196" r="12"/></g>
+    <g class="steam r"><circle cx="384" cy="192" r="12"/><circle cx="384" cy="192" r="12"/><circle cx="384" cy="192" r="12"/></g>
   </svg>
   <div class="bubble" id="bubble">Thank you for screaming in my ear.</div>
 </div>
@@ -261,9 +286,8 @@ function render(db){
   const st = $("stage"), loud = db >= threshold, warm = !loud && db >= threshold-10;
   st.classList.toggle("loud", loud); st.classList.toggle("warm", warm);
   document.body.classList.toggle("warm", warm); document.body.classList.toggle("loud", loud);
-  // ansikte
-  $("mouth").setAttribute("d", loud ? "M86 214q8-12 16 0z" : warm ? "M84 212h20" : "M84 210q10 6 20 0");
-  $("eyeL").setAttribute("r", loud ? 2 : 4); $("eyeR").setAttribute("r", loud ? 2 : 4);
+  // rodnad: tonar in de sista 15 dB före gränsen
+  st.style.setProperty("--rage", Math.min(1, Math.max(0, (db-(threshold-15))/15)).toFixed(2));
   if (stream) $("mood").textContent = loud ? MOODS[4][1] : warm ? MOODS[3][1] : db >= 65 ? MOODS[2][1] : db >= 50 ? MOODS[1][1] : MOODS[0][1];
 }
 
