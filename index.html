@@ -4,278 +4,278 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#111">
-<title>Dezibel-Meister</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d0d0f">
+<title>Herr Ohr</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#111; --fg:#f2f2f2; --mut:#8a8a8a; --ok:#3ccf6e; --warn:#f2c230; --bad:#ff4a3d; }
-  * { box-sizing:border-box; }
-  html,body { margin:0; height:100%; background:var(--bg); color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
-  body { display:flex; flex-direction:column; align-items:center;
-    padding:calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px); }
-  h1 { font-size:18px; letter-spacing:.08em; text-transform:uppercase; color:var(--mut); margin:0 0 10px; }
-  #gauge { position:relative; width:min(80vw,340px); aspect-ratio:1; margin:10px 0; }
-  #gauge svg { width:100%; height:100%; }
-  #readout { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-  #db { font-size:72px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1; }
-  #unit { color:var(--mut); font-size:16px; margin-top:4px; }
-  #peak { color:var(--mut); font-size:13px; margin-top:8px; }
-  #flash { position:fixed; inset:0; background:var(--bad); opacity:0; pointer-events:none; transition:opacity .4s; }
-  #quote { min-height:48px; font-size:18px; font-style:italic; text-align:center; margin:6px 0 14px; color:var(--bad); }
-  button { font:inherit; font-weight:700; font-size:18px; border:0; border-radius:14px;
-    padding:16px 28px; background:var(--fg); color:var(--bg); width:min(100%,340px); }
-  button.stop { background:#333; color:var(--fg); }
-  .row { width:min(100%,340px); margin-top:18px; }
-  .row label { display:flex; justify-content:space-between; font-size:14px; color:var(--mut); margin-bottom:6px; }
-  .row label b { color:var(--fg); }
-  input[type=range] { width:100%; accent-color:var(--bad); }
-  select { width:100%; font:inherit; font-size:14px; padding:8px; border-radius:10px; background:#222; color:var(--fg); border:1px solid #333; }
-  #err { color:var(--bad); font-size:14px; text-align:center; margin-top:12px; max-width:340px; }
-  .btns { display:flex; gap:8px; }
-  .small { flex:1; font-size:14px; font-weight:600; padding:10px; border-radius:10px; background:#222; color:var(--fg);
-    border:1px solid #333; text-align:center; width:auto; display:block; margin:0; cursor:pointer; }
-  #clear { flex:0 0 44px; }
-  #rec.on { background:var(--bad); color:#fff; }
-  .chk { display:flex !important; justify-content:flex-start !important; gap:8px; align-items:center; margin-top:10px; }
-  #test { background:transparent; color:var(--mut); border:1px solid #333; font-size:14px; padding:10px; margin-top:12px; }
+  :root{
+    --bg:#0d0d0f; --card:#17171b; --line:#26262c; --fg:#f4f1ea; --mut:#8b8892;
+    --gold:#ffce00; --red:#ff3b2f; --skin:#f2b48c; --skin2:#d98f69;
+    --lvl:0; /* 0..1 */
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,sans-serif}
+  body{display:flex;flex-direction:column;align-items:center;overflow-x:hidden;
+    padding:calc(env(safe-area-inset-top) + 18px) 18px calc(env(safe-area-inset-bottom) + 18px)}
+  .flag{display:flex;width:64px;height:6px;border-radius:3px;overflow:hidden;margin-bottom:14px}
+  .flag i{flex:1}.flag i:nth-child(1){background:#000;border:1px solid #333}.flag i:nth-child(2){background:#dd0000}.flag i:nth-child(3){background:var(--gold)}
+  h1{font-family:"Archivo Black",sans-serif;font-size:34px;margin:0;letter-spacing:-.01em;line-height:1}
+  .sub{color:var(--mut);font-size:14px;margin:6px 0 0}
+
+  /* Örat */
+  .stage{position:relative;width:min(78vw,320px);aspect-ratio:1;margin:18px 0 6px;display:grid;place-items:center}
+  .rings{position:absolute;inset:0}
+  .rings span{position:absolute;inset:0;border-radius:50%;border:2px solid var(--red);opacity:0;transform:scale(.6)}
+  .loud .rings span{animation:ring 1s ease-out infinite}
+  .loud .rings span:nth-child(2){animation-delay:.33s}.loud .rings span:nth-child(3){animation-delay:.66s}
+  @keyframes ring{to{opacity:0;transform:scale(1.15)}from{opacity:.7;transform:scale(.6)}}
+  #ear{width:72%;transition:transform .15s;transform:scale(calc(1 + var(--lvl)*.12))}
+  .loud #ear{animation:shake .12s linear infinite}
+  @keyframes shake{0%{translate:-3px 0;rotate:-2deg}50%{translate:3px 0;rotate:2deg}100%{translate:-3px 0;rotate:-2deg}}
+  #ear .skin{fill:var(--skin);transition:fill .2s}
+  .warm #ear .skin{fill:#f59a7a}
+  .loud #ear .skin{fill:#ff6a52}
+  #ear .inner{fill:var(--skin2)}
+  .bubble{position:absolute;top:2%;right:-4%;background:var(--fg);color:#111;font-weight:600;font-size:15px;
+    padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:62%;opacity:0;transform:translateY(8px) scale(.9);
+    transition:all .25s cubic-bezier(.2,1.4,.4,1);pointer-events:none}
+  .bubble.show{opacity:1;transform:none}
+
+  /* Siffran */
+  .read{display:flex;align-items:baseline;gap:6px}
+  #db{font-family:"Archivo Black",sans-serif;font-size:84px;line-height:.9;font-variant-numeric:tabular-nums;transition:color .2s}
+  .warm #db{color:var(--gold)} .loud #db{color:var(--red)}
+  .unit{font-size:20px;color:var(--mut);font-weight:600}
+  #mood{color:var(--mut);font-size:15px;height:20px;margin-top:6px}
+
+  /* Mätare */
+  .meter{width:min(100%,360px);margin:16px 0 18px;position:relative}
+  .bars{display:flex;gap:3px;height:34px;align-items:flex-end}
+  .bars i{flex:1;background:var(--line);border-radius:2px;height:30%;transition:background .08s,height .08s}
+  .thr{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--fg);border-radius:1px}
+  .thr::after{content:attr(data-v);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--mut);white-space:nowrap}
+  .scale{display:flex;justify-content:space-between;color:var(--mut);font-size:11px;margin-top:6px}
+
+  button.main{font:600 18px Inter,sans-serif;border:0;border-radius:18px;padding:18px;width:min(100%,360px);
+    background:var(--gold);color:#111;box-shadow:0 6px 0 #b38f00;transition:transform .05s,box-shadow .05s}
+  button.main:active{transform:translateY(4px);box-shadow:0 2px 0 #b38f00}
+  button.main.on{background:var(--card);color:var(--fg);box-shadow:0 6px 0 #000;border:1px solid var(--line)}
+  .stats{display:flex;gap:10px;width:min(100%,360px);margin-top:16px}
+  .stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+  .stat b{display:block;font-family:"Archivo Black",sans-serif;font-size:22px}
+  .stat span{font-size:12px;color:var(--mut)}
+
+  details{width:min(100%,360px);margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 14px}
+  summary{cursor:pointer;padding:10px 0;color:var(--mut);font-size:14px;list-style:none}
+  summary::after{content:"＋";float:right}details[open] summary::after{content:"－"}
+  .row{margin:6px 0 14px}
+  .row label{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-bottom:6px}
+  .row label b{color:var(--fg)}
+  input[type=range]{width:100%;accent-color:var(--gold)}
+  select{width:100%;font:inherit;font-size:14px;padding:9px;border-radius:10px;background:#0f0f12;color:var(--fg);border:1px solid var(--line)}
+  .ghost{width:100%;font:600 14px Inter,sans-serif;padding:11px;border-radius:10px;background:transparent;color:var(--fg);border:1px solid var(--line);margin-bottom:12px}
+  #err{color:var(--red);font-size:13px;text-align:center;margin-top:12px;max-width:360px;min-height:1em}
+  #flash{position:fixed;inset:0;background:var(--red);opacity:0;pointer-events:none;transition:opacity .5s}
 </style>
 </head>
 <body>
 <div id="flash"></div>
-<h1>Dezibel-Meister</h1>
+<div class="flag"><i></i><i></i><i></i></div>
+<h1>HERR OHR</h1>
+<p class="sub">Ein sehr empfindliches Ohr.</p>
 
-<div id="gauge">
-  <svg viewBox="0 0 200 200">
-    <circle cx="100" cy="100" r="86" fill="none" stroke="#222" stroke-width="14"
-      stroke-dasharray="405 541" transform="rotate(135 100 100)" stroke-linecap="round"/>
-    <circle id="arc" cx="100" cy="100" r="86" fill="none" stroke="var(--ok)" stroke-width="14"
-      stroke-dasharray="0 541" transform="rotate(135 100 100)" stroke-linecap="round"/>
-    <line id="thr" x1="100" y1="6" x2="100" y2="24" stroke="var(--bad)" stroke-width="3" transform="rotate(0 100 100)"/>
+<div class="stage" id="stage">
+  <div class="rings"><span></span><span></span><span></span></div>
+  <svg id="ear" viewBox="0 0 200 240" aria-hidden="true">
+    <path class="skin" d="M100 12c-50 0-82 36-82 84 0 30 12 50 26 66 12 14 14 26 16 40 4 22 20 34 40 34 22 0 36-16 36-34 0-14-8-20-8-34 0-16 30-30 30-72C158 46 140 12 100 12z"/>
+    <path class="inner" d="M100 40c-34 0-56 24-56 56 0 18 8 30 18 40 8 8 6 20 18 22 10 2 14-8 12-18-2-12-14-14-14-30 0-18 12-32 30-32 16 0 26 10 26 24 0 12-8 16-8 26 0 8 10 10 14 2 6-12 14-18 14-34 0-34-24-56-54-56z"/>
+    <ellipse cx="96" cy="108" rx="11" ry="15" fill="#5a2a1a" opacity=".55"/>
+    <!-- ansikte -->
+    <g id="face" fill="#2a1410">
+      <circle id="eyeL" cx="76" cy="190" r="4"/><circle id="eyeR" cx="112" cy="190" r="4"/>
+      <path id="mouth" d="M84 210q10 6 20 0" stroke="#2a1410" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </g>
   </svg>
-  <div id="readout">
-    <div id="db">--</div>
-    <div id="unit">dB</div>
-    <div id="peak">max --</div>
-  </div>
+  <div class="bubble" id="bubble">Thank you for screaming in my ear.</div>
 </div>
 
-<div id="quote"></div>
-<button id="go">Starta</button>
+<div class="read"><div id="db">--</div><div class="unit">dB</div></div>
+<div id="mood">Tryck på start, bitte.</div>
 
-<div class="row">
-  <label>Gräns för ”för högt” <b><span id="thrVal">80</span> dB</b></label>
-  <input id="thrIn" type="range" min="50" max="110" value="80">
+<div class="meter">
+  <div class="bars" id="bars"></div>
+  <div class="thr" id="thr"></div>
+  <div class="scale"><span>30</span><span>60</span><span>90</span><span>120</span></div>
 </div>
-<div class="row">
-  <label>Kalibrering <b><span id="calVal">+0</span> dB</b></label>
-  <input id="calIn" type="range" min="-20" max="20" value="0">
+
+<button class="main" id="go">Starta Herr Ohr</button>
+
+<div class="stats">
+  <div class="stat"><b id="peak">–</b><span>Högsta dB</span></div>
+  <div class="stat"><b id="count">0</b><span>Gånger skrikit</span></div>
 </div>
-<div class="row">
-  <label>Röst</label>
-  <select id="voiceSel"></select>
-</div>
-<div class="row">
-  <label>Egen röstfil <b id="clipState">ingen</b></label>
-  <div class="btns">
-    <button id="rec" class="small">⏺ Spela in</button>
-    <label class="small filebtn">📁 Ljudfil<input type="file" accept="audio/*" id="file" hidden></label>
-    <button id="clear" class="small">✕</button>
+
+<details>
+  <summary>Inställningar</summary>
+  <div class="row">
+    <label>Gräns för ”för högt” <b><span id="thrVal">80</span> dB</b></label>
+    <input id="thrIn" type="range" min="50" max="110" value="80">
   </div>
-  <label class="chk"><input type="checkbox" id="deep" checked> Mörkare röst (sänker tonen på egen fil)</label>
-</div>
-<button id="test">🔊 Testa rösten</button>
+  <div class="row">
+    <label>Kalibrering <b><span id="calVal">+0</span> dB</b></label>
+    <input id="calIn" type="range" min="-20" max="20" value="0">
+  </div>
+  <div class="row" id="voiceRow">
+    <label>Reservröst (om ingen inspelning finns)</label>
+    <select id="voiceSel"></select>
+  </div>
+  <button class="ghost" id="test">🔊 Testa rösten</button>
+</details>
 <div id="err"></div>
 
 <script>
+/* Inbyggd röst (base64-ljud). Tom = använd talsyntes som reserv. */
+const VOICE_B64 = "";
+const VOICE_MIME = "audio/mp4";
+
 const LINE = "Thank you for screaming in my ear.";
-const MIN_DB = 30, MAX_DB = 120, ARC = 405;
-const BASE_OFFSET = 100;          // dBFS → ungefärlig dB SPL för typiska mobilmikrofoner
-const HOLD_MS = 350;              // så länge det måste vara för högt
-const COOLDOWN_MS = 5000;         // paus mellan utbrotten
-
+const MIN_DB = 30, MAX_DB = 120, N_BARS = 36;
+const BASE_OFFSET = 100, HOLD_MS = 350, COOLDOWN_MS = 5000;
+const MOODS = [
+  [0,  "Ruhig. Herr Ohr slumrar."],
+  [50, "Angenehm. Fortsätt så."],
+  [65, "Hmm. Lite högljutt nu."],
+  [-10,"Achtung! Nära gränsen…"],
+  [0,  "AUA! Für das Ohr!"]
+];
 const $ = id => document.getElementById(id);
-let ctx, analyser, stream, raf, buf;
-let smooth = 0, peak = 0, overSince = 0, lastSpoke = 0, speaking = false;
-let threshold = 80, calib = 0, voices = [], chosen = null;
 
-try {
-  threshold = +(localStorage.getItem("thr") || 80);
-  calib = +(localStorage.getItem("cal") || 0);
-} catch (e) {}
-$("thrIn").value = threshold; $("calIn").value = calib;
-updateLabels();
+/* ---------- Mätarstaplar ---------- */
+const bars = [];
+for (let i = 0; i < N_BARS; i++) { const b = document.createElement("i"); $("bars").appendChild(b); bars.push(b); }
 
-$("thrIn").oninput = e => { threshold = +e.target.value; save(); updateLabels(); };
-$("calIn").oninput = e => { calib = +e.target.value; save(); updateLabels(); };
-function save(){ try { localStorage.setItem("thr", threshold); localStorage.setItem("cal", calib); } catch(e){} }
-function updateLabels(){
+let threshold = 80, calib = 0;
+try { threshold = +(localStorage.getItem("thr") || 80); calib = +(localStorage.getItem("cal") || 0); } catch(e){}
+$("thrIn").value = threshold; $("calIn").value = calib; labels();
+$("thrIn").oninput = e => { threshold = +e.target.value; save(); labels(); };
+$("calIn").oninput = e => { calib = +e.target.value; save(); labels(); };
+function save(){ try{ localStorage.setItem("thr",threshold); localStorage.setItem("cal",calib);}catch(e){} }
+function labels(){
   $("thrVal").textContent = threshold;
-  $("calVal").textContent = (calib >= 0 ? "+" : "") + calib;
-  const deg = ((threshold - MIN_DB) / (MAX_DB - MIN_DB)) * 270 - 135;
-  $("thr").setAttribute("transform", `rotate(${deg} 100 100)`);
+  $("calVal").textContent = (calib>=0?"+":"")+calib;
+  const f = (threshold-MIN_DB)/(MAX_DB-MIN_DB);
+  $("thr").style.left = `calc(${f*100}% - 1px)`; $("thr").dataset.v = threshold + " dB";
 }
 
-/* ---------- Röst: tysk man ---------- */
-const MALE_HINTS = /markus|yannick|stefan|conrad|killian|florian|hans|jonas|male|mann|männlich/i;
-const FEMALE_HINTS = /anna|petra|helena|katja|hedda|marlene|vicki|female|frau|weiblich/i;
+/* ---------- Röst ---------- */
+let clip = null;
+if (VOICE_B64) {
+  const bin = atob(VOICE_B64), arr = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+  clip = new Audio(URL.createObjectURL(new Blob([arr],{type:VOICE_MIME})));
+  clip.preload = "auto"; clip.playsInline = true;
+  $("voiceRow").style.display = "none";
+}
+const MALE = /markus|yannick|stefan|conrad|killian|florian|hans|jonas|male|mann/i;
+let voices = [], chosen = null;
 function loadVoices(){
   voices = speechSynthesis.getVoices();
-  const de = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("de"));
-  const ranked = [...de].sort((a,b) => score(b) - score(a));
+  const de = voices.filter(v => /^de/i.test(v.lang)).sort((a,b)=>(MALE.test(b.name)?1:0)-(MALE.test(a.name)?1:0));
   const sel = $("voiceSel"); sel.innerHTML = "";
-  (ranked.length ? ranked : voices).forEach((v,i) => {
-    const o = document.createElement("option");
-    o.value = v.name; o.textContent = `${v.name} (${v.lang})`; sel.appendChild(o);
-  });
-  let saved = null; try { saved = localStorage.getItem("voice"); } catch(e){}
-  chosen = voices.find(v => v.name === saved) || ranked[0] || null;
+  (de.length?de:voices).forEach(v => { const o=document.createElement("option"); o.value=v.name; o.textContent=`${v.name} (${v.lang})`; sel.appendChild(o); });
+  let saved=null; try{saved=localStorage.getItem("voice");}catch(e){}
+  chosen = voices.find(v=>v.name===saved) || de[0] || null;
   if (chosen) sel.value = chosen.name;
-  if (!de.length) $("err").textContent = "Ingen tysk röst hittades på enheten – lägg till en tysk röst (t.ex. ”Markus”) i telefonens inställningar för talat innehåll.";
 }
-function score(v){ return (MALE_HINTS.test(v.name)?10:0) - (FEMALE_HINTS.test(v.name)?10:0) + (v.localService?1:0) + (/enhanced|premium|förbättrad/i.test(v.name)?2:0); }
-$("voiceSel").onchange = e => { chosen = voices.find(v => v.name === e.target.value); try{localStorage.setItem("voice", chosen.name);}catch(_){} };
+$("voiceSel").onchange = e => { chosen = voices.find(v=>v.name===e.target.value); try{localStorage.setItem("voice",chosen.name);}catch(_){} };
 if ("speechSynthesis" in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
-/* ---------- Egen röstfil (sparas i webbläsaren) ---------- */
-let clipUrl = null, recorder = null;
-const audioEl = new Audio(); audioEl.preload = "auto"; audioEl.playsInline = true;
-function idb(){ return new Promise((res, rej) => { const r = indexedDB.open("dezibel", 1);
-  r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
-async function putClip(b){ try { const db = await idb(); const t = db.transaction("kv","readwrite");
-  b ? t.objectStore("kv").put(b, "clip") : t.objectStore("kv").delete("clip"); } catch(e){} }
-async function getClip(){ try { const db = await idb(); return await new Promise(r => {
-  const q = db.transaction("kv").objectStore("kv").get("clip"); q.onsuccess = () => r(q.result || null); q.onerror = () => r(null); }); } catch(e){ return null; } }
-function setClip(b){
-  if (clipUrl) URL.revokeObjectURL(clipUrl);
-  clipUrl = b ? URL.createObjectURL(b) : null;
-  audioEl.src = clipUrl || "";
-  $("clipState").textContent = b ? "används ✓" : "ingen";
-}
-getClip().then(setClip);
-
-$("file").onchange = e => { const f = e.target.files[0]; if (f) { setClip(f); putClip(f); } };
-$("clear").onclick = () => { setClip(null); putClip(null); };
-$("rec").onclick = async () => {
-  if (recorder) { recorder.stop(); return; }
-  try {
-    const s = stream || await navigator.mediaDevices.getUserMedia({ audio: true });
-    const chunks = [];
-    recorder = new MediaRecorder(s);
-    recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
-    recorder.onstop = () => {
-      const b = new Blob(chunks, { type: recorder.mimeType || "audio/mp4" });
-      if (s !== stream) s.getTracks().forEach(t => t.stop());
-      recorder = null; lastSpoke = performance.now(); $("rec").classList.remove("on"); $("rec").textContent = "⏺ Spela in";
-      setClip(b); putClip(b);
-    };
-    recorder.start(); $("rec").classList.add("on"); $("rec").textContent = "⏹ Stoppa";
-    lastSpoke = performance.now() + 60000; // trigga inte medan du spelar in
-    setTimeout(() => recorder && recorder.stop(), 6000);
-  } catch(e) { $("err").textContent = "Kunde inte spela in – tillåt mikrofonen (kräver https)."; }
-};
-function applyDeep(){
-  const deep = $("deep").checked;
-  audioEl.preservesPitch = audioEl.mozPreservesPitch = audioEl.webkitPreservesPitch = !deep;
-  audioEl.playbackRate = deep ? 0.82 : 1;
-}
-
+let speaking = false, lastSpoke = 0;
+function done(){ speaking = false; lastSpoke = performance.now(); }
 function speak(){
-  if (clipUrl) {
-    applyDeep();
-    speaking = true;
-    audioEl.currentTime = 0;
-    audioEl.onended = audioEl.onerror = () => { speaking = false; lastSpoke = performance.now(); };
-    audioEl.play().catch(() => { speaking = false; lastSpoke = performance.now(); });
-    return;
-  }
-  if (!("speechSynthesis" in window)) return;
+  speaking = true;
+  if (clip) { clip.currentTime = 0; clip.onended = clip.onerror = done; clip.play().catch(done); return; }
+  if (!("speechSynthesis" in window)) return done();
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(LINE);
-  if (chosen) { u.voice = chosen; u.lang = chosen.lang; } else { u.lang = "de-DE"; }
-  const male = chosen && MALE_HINTS.test(chosen.name);
-  u.pitch = male ? 0.9 : 0.55;   // sänk tonläget om det inte är en manlig röst
-  u.rate = 0.92; u.volume = 1;
-  u.onstart = () => { speaking = true; };
-  u.onend = u.onerror = () => { speaking = false; lastSpoke = performance.now(); };
-  speechSynthesis.speak(u);
+  if (chosen) { u.voice = chosen; u.lang = chosen.lang; } else u.lang = "de-DE";
+  u.pitch = chosen && MALE.test(chosen.name) ? 0.9 : 0.5; u.rate = 0.92;
+  u.onend = u.onerror = done; speechSynthesis.speak(u);
 }
-$("test").onclick = () => speak();
+$("test").onclick = () => { speak(); showBubble(); };
 
-/* ---------- Mätning ---------- */
-$("go").onclick = async () => { stream ? stop() : start(); };
+/* ---------- Mikrofon ---------- */
+let ctx, analyser, stream, raf, buf, smooth = 0, peak = 0, overSince = 0, count = 0;
+$("go").onclick = () => stream ? stop() : start();
 
 async function start(){
   $("err").textContent = "";
   try {
-    // "väck" talsyntesen inom användarklicket (krävs i iOS)
-    if ("speechSynthesis" in window) { const w = new SpeechSynthesisUtterance(" "); w.volume = 0; speechSynthesis.speak(w); }
-    if (clipUrl) { audioEl.muted = true; audioEl.play().then(() => { audioEl.pause(); audioEl.muted = false; }).catch(() => { audioEl.muted = false; }); }
-    stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation:false, noiseSuppression:false, autoGainControl:false }
-    });
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    await ctx.resume();
-    const src = ctx.createMediaStreamSource(stream);
-    analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
-    buf = new Float32Array(analyser.fftSize);
-    src.connect(analyser);
-    peak = 0; smooth = 0;
-    $("go").textContent = "Stoppa"; $("go").classList.add("stop");
+    if ("speechSynthesis" in window && !clip) { const w = new SpeechSynthesisUtterance(" "); w.volume = 0; speechSynthesis.speak(w); }
+    if (clip) { clip.muted = true; clip.play().then(()=>{clip.pause(); clip.muted=false;}).catch(()=>{clip.muted=false;}); }
+    stream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false }});
+    ctx = new (window.AudioContext||window.webkitAudioContext)(); await ctx.resume();
+    analyser = ctx.createAnalyser(); analyser.fftSize = 2048; buf = new Float32Array(analyser.fftSize);
+    ctx.createMediaStreamSource(stream).connect(analyser);
+    $("go").textContent = "Stoppa"; $("go").classList.add("on");
     loop();
-  } catch (e) {
+  } catch(e) {
     stream = null;
-    $("err").textContent = "Kunde inte starta mikrofonen. Sidan måste öppnas via https (eller localhost) och du måste tillåta mikrofonåtkomst.";
+    $("err").textContent = "Mikrofonen gick inte att starta. Öppna sidan via https och tillåt mikrofonen.";
   }
 }
 function stop(){
-  cancelAnimationFrame(raf);
-  stream.getTracks().forEach(t => t.stop()); stream = null;
-  ctx && ctx.close(); ctx = null;
-  $("go").textContent = "Starta"; $("go").classList.remove("stop");
-  $("db").textContent = "--";
-  setArc(MIN_DB);
+  cancelAnimationFrame(raf); stream.getTracks().forEach(t=>t.stop()); stream = null;
+  ctx && ctx.close(); $("go").textContent = "Starta Herr Ohr"; $("go").classList.remove("on");
+  $("db").textContent = "--"; render(MIN_DB); $("mood").textContent = "Herr Ohr vilar.";
 }
 
 function loop(){
   analyser.getFloatTimeDomainData(buf);
-  let sum = 0; for (let i = 0; i < buf.length; i++) sum += buf[i]*buf[i];
-  const rms = Math.sqrt(sum / buf.length);
-  const dbfs = 20 * Math.log10(Math.max(rms, 1e-8));
-  const db = Math.max(0, dbfs + BASE_OFFSET + calib);
-  smooth = smooth ? smooth*0.8 + db*0.2 : db;
-  peak = Math.max(peak, smooth);
-
+  let s = 0; for (let i=0;i<buf.length;i++) s += buf[i]*buf[i];
+  const db = Math.max(0, 20*Math.log10(Math.max(Math.sqrt(s/buf.length),1e-8)) + BASE_OFFSET + calib);
+  smooth = smooth ? smooth*.8 + db*.2 : db;
+  if (smooth > peak) { peak = smooth; $("peak").textContent = Math.round(peak); }
   $("db").textContent = Math.round(smooth);
-  $("peak").textContent = "max " + Math.round(peak);
-  setArc(smooth);
+  render(smooth);
 
   const now = performance.now();
-  // ignorera ljud medan rösten själv pratar
   if (!speaking && smooth >= threshold) {
     if (!overSince) overSince = now;
     if (now - overSince > HOLD_MS && now - lastSpoke > COOLDOWN_MS) trigger();
   } else overSince = 0;
-
   raf = requestAnimationFrame(loop);
 }
 
-function setArc(db){
-  const f = Math.min(1, Math.max(0, (db - MIN_DB) / (MAX_DB - MIN_DB)));
-  const arc = $("arc");
-  arc.setAttribute("stroke-dasharray", `${f*ARC} 541`);
-  arc.setAttribute("stroke", db >= threshold ? "var(--bad)" : db >= threshold - 10 ? "var(--warn)" : "var(--ok)");
-  $("db").style.color = db >= threshold ? "var(--bad)" : "var(--fg)";
+function render(db){
+  const f = Math.min(1, Math.max(0, (db-MIN_DB)/(MAX_DB-MIN_DB)));
+  document.documentElement.style.setProperty("--lvl", f);
+  const lit = Math.round(f*N_BARS), thrBar = (threshold-MIN_DB)/(MAX_DB-MIN_DB)*N_BARS;
+  bars.forEach((b,i) => {
+    const on = i < lit;
+    b.style.height = on ? (40 + i/N_BARS*60) + "%" : "30%";
+    b.style.background = !on ? "var(--line)" : i >= thrBar ? "var(--red)" : i >= thrBar-4 ? "var(--gold)" : "var(--fg)";
+  });
+  const st = $("stage"), loud = db >= threshold, warm = !loud && db >= threshold-10;
+  st.classList.toggle("loud", loud); st.classList.toggle("warm", warm);
+  document.body.classList.toggle("warm", warm); document.body.classList.toggle("loud", loud);
+  // ansikte
+  $("mouth").setAttribute("d", loud ? "M86 214q8-12 16 0z" : warm ? "M84 212h20" : "M84 210q10 6 20 0");
+  $("eyeL").setAttribute("r", loud ? 2 : 4); $("eyeR").setAttribute("r", loud ? 2 : 4);
+  if (stream) $("mood").textContent = loud ? MOODS[4][1] : warm ? MOODS[3][1] : db >= 65 ? MOODS[2][1] : db >= 50 ? MOODS[1][1] : MOODS[0][1];
 }
 
+function showBubble(){ $("bubble").classList.add("show"); setTimeout(()=>$("bubble").classList.remove("show"), 3500); }
 function trigger(){
   lastSpoke = performance.now(); overSince = 0;
-  speak();
-  $("quote").textContent = "„" + LINE + "“";
-  $("flash").style.opacity = .35;
-  setTimeout(() => $("flash").style.opacity = 0, 400);
-  if (navigator.vibrate) navigator.vibrate(200);
-  setTimeout(() => $("quote").textContent = "", 4000);
+  $("count").textContent = ++count;
+  speak(); showBubble();
+  $("flash").style.opacity = .35; setTimeout(()=>$("flash").style.opacity = 0, 350);
+  if (navigator.vibrate) navigator.vibrate([120,60,120]);
 }
+render(MIN_DB);
 </script>
 </body>
 </html>
